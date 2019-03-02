@@ -423,6 +423,157 @@ int main() {
 
 - 任务：参照船长求解的代码
 
+习题：对称字符串
+
+习题：寻找字符串 
+
+**:boom: 任务：KMP算法自己写一遍**
+
+寻找字符串中另一个字符串出现的次数
+
+可以使用KMP算法，稍加修改为统计次数（即找到后不直接返回，而是把次数加1）
+
+读入含空格的字符串可以用gets()(蓝桥杯可以用，其他情况用fgets()，但会读入最后的回车符，在win下是\r\n，在Linux下是\n)
+
+```cpp
+// KMP算法
+int KMP(char *str, char *pattern) {
+    int *next = (int *)malloc(sizeof(int) * strlen(pattern));
+    next[0] = -1;
+    // 初始化next数组
+    for (int i = 1; pattern[i]; i++) {
+        int j = next[i - 1];
+        if (j != -1 && pattern[j + 1] != pattern[i]) j = next[j];
+        if (pattern[j + 1] == pattern[i]) next[i] = j + 1;
+        else next[i] = -1;    
+    }
+    int i = 0, j = -1;      
+    // i指向待匹配的位置
+    // j:当前已经匹配成功的,下一次要匹j + 1
+    while (str[i]) {
+        while (j != -1 && str[i] != pattern[j + 1]) j = next[j];
+        if (str[i] == pattern[j + 1]) {
+            j += 1;
+            i += 1;         // 可以放到条件语句外
+        } else {
+            i += 1;
+        }
+        if (pattern[j + 1] == 0) return i - strlen(pattern); // 找到了模式串在母串的位置
+    }
+    return -1;
+}
+
+```
+
+习题：蒜头君的生日
+
+#### 日期问题解法--船长日期模板
+
+```cpp
+#include <iostream>
+using namespace std;
+int month[13] = {
+	0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+};
+int isLeap(int y) {
+    return (y % 400 == 0 || (y % 4 == 0 && y % 100 != 0));
+}
+int get_next_day(int y, int m, int d) {
+	d += 1;
+    if (d > month[m] + (m == 2 && isLeap(y))) d = 1;
+    return d;
+}
+int main() {
+    int y, m, d, k;
+    cin >> y >> m >> d >> k;
+	while (k--) {
+        d = get_next_day(y, m, d);
+        m += (d == 1);
+        y += (m == 13 && (m = 1));
+    }
+    cout << y << "-"; 
+    if (m < 10) cout << "0";
+	cout << m << "-";
+    if (d < 10) cout << "0";
+    cout << d << endl;
+    return 0;
+}
+```
+
+#### sort排序练习题：抢七球升级版
+
+使用二分问题的模板进行优化，成功通过大数据量
+
+```cpp
+#include <iostream>
+#include <algorithm>
+#include <cstring>
+#include <vector>
+using namespace std;
+typedef struct Kid {
+    int id;
+    int val;
+    int cnt;
+} Kid;
+bool cmp(Kid a, Kid b) {
+    return a.val < b.val;
+}
+bool cmp_id(Kid a, Kid b) {
+    return a.id < b.id;
+}
+bool cmp_height(int a, int b) {
+	return a < b;
+}
+// 找到第一个比这个值大的数的下标
+// 00000001
+int find(int *&height, int m, int val) {
+	int head = 0, tail = m;
+    while (head < tail) {
+        int mid = (head + tail) / 2;
+        if (height[mid] <= val) head = mid + 1;
+        else tail = mid;
+    }
+   	if (head == m) return m; 		// 找不到的情况
+    return head;
+}
+int main() {
+    int n, m;
+    cin >> n >> m;
+    Kid *kids = new Kid[n];
+    int *height = new int[m];
+    vector<bool> vis(m, false);
+    for (int i = 0; i < n; i++) {
+        kids[i].id = i;
+        kids[i].cnt = 0;
+    	cin >> kids[i].val;
+    }
+    for (int i = 0; i < m; i++) {
+        cin >> height[i];
+    }
+    sort(height, height + m, cmp_height);
+    sort(kids, kids + n, cmp);
+    int pre_pos = 0, pos;
+    // 使用二分的思想，先找到第一个比它大的气球（即够不到的）
+    // 之后用这个值减去上一个孩子够不到的气球，即为此孩子能够到的气球数目
+    // 二分优化后，成功通过
+    for (int i = 0; i < n; i++) {
+        // pos为当前孩子够不到的第一个位置
+    	pos = find(height, m, kids[i].val);
+        //printf("val:%d, pre_pos:%d, pos:%d\n", kids[i].val, pre_pos, pos);
+    	kids[i].cnt = pos - pre_pos;
+        // pre_pos为上一个孩子够不到的第一个位置
+        pre_pos = pos;
+    }
+    sort(kids, kids + n, cmp_id);
+    for (int i = 0; i < n; i++) cout << kids[i].cnt << endl;
+    delete[] kids;
+    delete[] height;
+    return 0;
+}
+```
+
+
+
 ## 蓝桥杯使用c++中的注意点
 
 不支持自动变量auto
@@ -430,3 +581,12 @@ int main() {
 不支持范围for
 
 `stack<pair<char,int> >`一定要有空格 ？？？
+
+#### 引用c语言的头文件
+
+```cpp
+#include<cstdio>
+#include<cstdlib>
+#include<cstring>
+```
+
