@@ -66,6 +66,23 @@
 
 使用stringstream处理输入
 
+```cpp
+// 注意，如果前面有回车的话，要先getchar()，否则getline()会得到空行
+getline(cin, s);
+stringstream ss;
+ss << s;
+string temp;
+while (getline(ss, temp, ' ')) {
+    cout << temp;
+}
+void s2i(string &str, int &num) {
+    stringstream ss;
+    ss << str;
+    ss >> num;
+    return ;
+}
+```
+
 #### 8 买不到的数目
 
 1. 利用素数筛的思想，只能通过部分样例，因为数组开过大会影响时间
@@ -199,6 +216,10 @@ LL fib(LL i) {
 
 ## 2015真题
 
+#### 3 奇妙的数字
+
+判断一个数是否0-9所有数字都出现了一次，可以转成字符串，之后再用`set<char>`去重，最后判断集合元素个数是否为10即可
+
 #### 4 格子中输出
 
 :boom: *占位符在printf中的作用
@@ -207,9 +228,84 @@ LL fib(LL i) {
 printf("%*s", 10, s); /*意思是输出字符串s，但至少占10个位置，不足的在字符串s左边补空格，这里等同于printf("%10s", s);*/
 ```
 
+- 对于上述等不常用的用法，可以查询考场的API手册
 
+#### 6 牌型总数
 
+无重复
 
+ :boom:一定要**`注意审题`**！！！！是4个人每人13张牌，要凑够13张牌，而不是凑4张牌
+
+另一种dfs思路（但跑出来的时间和常规dfs思路差不太多）
+
+```cpp
+// 按照配额来算，一共13种牌型，13张牌，每种牌型可以分配0~4张，当累计分配了13张时，则答案数加1
+int ans = 0;
+void f(int k, int cnt) {
+	if (cnt > 13 || k > 13) return ;
+	if (cnt == 13 && k == 13) {
+		ans++;
+		return ;
+	}
+	for (int i = 0; i < 5; i++) {
+		f(k + 1, cnt + i);
+	}
+}
+f(0, 0);
+cout << ans << endl;
+```
+
+#### 7 手链反转 :boom:
+
+**`s'是否是s的旋转串《==》s'是否是s+s的子串`**
+
+```cpp
+string s = "aaabbbbccccc";
+int ans = 0;
+vector<string> v;
+do {
+    // 判断是否已经存在这种排列
+    int flag = 1;
+    for (int i = 0; i < v.size(); i++) {
+        if (v[i].find(s) != string::npos) {
+            flag = 0;
+            break;
+        }
+    } 
+    if (flag == 0) continue;
+    string s2 = s + s;		// 不能直接操作s,因为全排列时要保证s不变 
+    v.push_back(s2);		// 模拟旋转的情况
+    reverse(s2.begin(), s2.end());
+    v.push_back(s2);		// 模拟翻转的情况(将s2而非s进行翻转，因为还可能翻转后再旋转） 
+    ans++;
+} while (next_permutation(s.begin(), s.end()));
+```
+
+#### 9 垒骰子
+
+要注意骰子的面可以转动
+
+分类是+法
+
+分步是乘法
+
+1. 递归，能得30分
+
+2. dp，能得60分 :boom:
+
+   定义`dp[i][j]`表示i层，限定朝上的数字为j的方案数
+
+   $dp[i][j] = \sum_{x=1}^{6}dp[i - 1][x] (op[j]与x不冲突)​$
+
+   可使用滚动数组，对于只有两行的滚动数组，可以借助一个变量cur，每次执行`cur = 1 - cur`即可
+
+3. 矩阵快速幂
+
+:boom:**因为n最大为$10^9$，大概需要10s，因此要优化到logn才能通过，而优化到logn的方法，一般有二分，和倍增。**
+
+#### 10 灾后重建
+
+最小生成树Kruskal
 
 ## 总结
 
@@ -253,5 +349,21 @@ c++11中可以直接pop_back
 str = str.substr(0, str.length() - 1);
 2.使用erase()
 str.erase(str.end() - 1)
+```
+
+#### queue
+
+如何清空STL中的队列
+
+```cpp
+1.使用swap，最高效
+void clear(queue<int> &q) {
+	queue<int> empty;
+	swap(empty, q);
+}
+2.直接用空的队列对象赋值
+queue<int> q1;
+q1 = queue<int>()
+3.遍历出队列
 ```
 
