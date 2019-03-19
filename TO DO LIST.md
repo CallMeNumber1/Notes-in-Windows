@@ -17,15 +17,21 @@
 
 两种不同的剪枝策略，不剪枝的话，第二种方法很慢
 
+#### 复习哈希和二分
+
 ## 学习篇
 
 #### 线段树（扫描线）
+
+​	后缀数组、树状数组？？
 
 #### 逆元
 
 #### 堆
 
+#### 贪心
 
+#### 优先队列
 
 
 
@@ -306,6 +312,116 @@ do {
 #### 10 灾后重建
 
 最小生成树Kruskal
+
+## 2016年真题
+
+#### 7 剪邮票:boom:
+
+:boom:这里使用了dfs的经典用法----连通性检测（将走到的地方都标记）
+
+因为dfs不可能产生一个T字型，因此本题采用先产生5个点，再去检测的方法。
+
+即先产生全排列，即从12个中选出5个，再去检测这5个是否满足要求(是否连通)
+
+1.采用一个数组，7个0，5个1，5个1即代表要选择的位置，之后对此数组求全排列，
+
+2.对于每一个排列，映射到题目中的二维数组，在二维数组中去判断5个位置的连通性即可。
+
+**`但要注意，求全排列的时候`****`去除重复！（手动或者直接使用next_permutation()皆可）`**
+
+```cpp
+#include <iostream>
+#include <vector>
+using namespace std; 
+// 结果116 
+// 先从12个点里面选出5个位置，之后再去判断这5个位置是否连通 
+int ans = 0;
+int a[12] = {0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1};
+int vis[12];
+int g[3][4];
+int dx[4] = {0, 0, 1, -1};
+int dy[4] = {1, -1, 0, 0};
+void solve(int x, int y) {
+	if (x < 0 || x >= 3 || y < 0 || y >= 4 || g[x][y] == 0) return ;
+	g[x][y] = 0;
+	for (int i = 0; i < 4; i++) {
+		solve(x + dx[i], y + dy[i]);
+	}
+	return ;
+}
+int check(vector<int> &temp) {
+	// 完成一维数组到二维数组的映射 
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 4; j++) {
+			if (temp[i * 4 + j] == 1) g[i][j] = 1;
+			else g[i][j] = 0;
+		}
+	}
+	// 检查连通性(即若只有一个连通分量，则符合要求) 
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 4; j++) {
+			cout << g[i][j] << " ";
+		}
+	}
+	cout << endl;
+	int cnt = 0;
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 4; j++) {
+			if (g[i][j] == 1) {
+				solve(i, j);
+				cnt++;
+			}
+		}
+	}
+	cout << "solve:" << endl;
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 4; j++) {
+			cout << g[i][j] << " ";
+		}
+	}
+	cout << endl;
+	return (cnt == 1);
+}
+void dfs(int k, vector<int> &temp) {
+	if (k == 12) {
+		//for (int i = 0; i < temp.size(); i++) {
+//			cout << temp[i] << " ";
+//		}
+//		cout << endl;
+		if (check(temp)) {
+			ans++;
+		} 
+		return ;
+	}
+	for (int i = 0; i < 12; i++) {
+		if (i > 0 && a[i] == a[i - 1] && !vis[i - 1]) continue;
+		if (!vis[i]) {
+			vis[i] = 1;
+			temp.push_back(a[i]);
+			dfs(k + 1, temp);
+			vis[i] = 0;
+			temp.pop_back();
+		}
+	}
+	return ;
+} 
+int main() {
+	vector<int> temp;
+	dfs(0, temp);
+	cout << ans << endl;
+	return 0;
+}
+```
+
+#### 8 四平方和
+
+:boom:**`遇到这种要搜4个数之和之类的问题，可以转化为搜3个，第四个值用前三个算出来，再去检查合理性，这样会节省大量时间`**
+
+#### 9 密码脱落
+
+即最少加上几个字符变成一个回文串
+
+将字符串逆转过来，做一次最长公共子序列，配不上的字符即为最少要加上的字符数
 
 ## 总结
 
