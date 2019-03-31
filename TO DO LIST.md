@@ -39,6 +39,8 @@
 
 #### 优先队列
 
+#### 状压DP
+
 
 
 ## 计蒜客模拟题（四）
@@ -541,4 +543,77 @@ q1 = queue<int>()
 
 bfs+记录路径
 
-在结构体里封装一个`string s`，记录到达该点的路径。
+1. 在结构体里封装一个`string s`，记录到达该点的路径。 
+2. 开一个数组`fa[][]`记录d当前节点的父亲节点，然后最后输出的时候，从最后一个点依次向前面找
+
+第一种方法很巧妙，也很容易实现
+
+第二种方法的实现如下（网上摘抄）
+
+```cpp
+#include<cstdio>
+#include<cstring>
+#include<stack>
+#include<queue>
+#include<string>
+using namespace std;
+int mp[5][5];
+struct Node{
+    int x;
+    int y;
+};
+Node fa[5][5];
+bool vis[5][5];
+bool ck(Node k)
+{
+    if(k.x<=4&&k.x>=0&&k.y>=0&&k.y<=4) return true;
+    return false;
+}
+
+int go[4][2] = {{1,0},{-1,0},{0,1},{0,-1}};
+
+void bfs(){
+    queue<Node>q;
+    memset(vis,0,sizeof(vis));
+    Node tm;
+    tm.x = 0;
+    tm.y = 0;
+    q.push(tm);
+    vis[0][0] = 1;
+    while(!q.empty()){
+        Node tm1 = q.front();q.pop();
+        Node fl;
+        for(int i = 0; i < 4; i++){
+            fl.x = tm1.x+go[i][0];
+            fl.y = tm1.y+go[i][1];
+            if(ck(fl)&&vis[fl.x][fl.y]==0&&mp[fl.x][fl.y]==0){
+                q.push(fl);
+                vis[fl.x][fl.y] = 1;
+                fa[fl.x][fl.y] = tm1;
+            }
+        }
+    }
+}
+
+int main()
+{
+    for(int i = 0; i < 5; i++)
+        for(int j = 0; j < 5; j++)
+            scanf("%d",&mp[i][j]);
+    bfs();
+    stack<Node>v;
+    Node ff = fa[4][4];
+    while(!(ff.x==0&&ff.y==0)){
+        v.push(ff);
+        ff = fa[ff.x][ff.y];
+    }
+    printf("(0, 0)\n");
+    while(!v.empty()){
+        printf("(%d, %d)\n",v.top().x,v.top().y);
+        v.pop();
+    }
+    printf("(4, 4)\n");
+    return 0;
+}
+```
+
