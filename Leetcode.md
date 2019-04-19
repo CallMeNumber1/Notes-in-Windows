@@ -18,6 +18,8 @@
 
 TopK Elements 问题
 
+<!--more-->
+
 #### 贪心思想
 
 Leetcode[435. Non-overlapping Intervals (Medium)](https://leetcode.com/problems/non-overlapping-intervals/description/)
@@ -47,3 +49,11 @@ Leetcode[452. Minimum Number of Arrows to Burst Balloons (Medium)](https://leetc
 #### 二分查找
 
 `mid = head + (tail - head)  / 2`; 可防止两数相加时溢出
+
+**Leetcode**[34. Search for a Range (Medium)](https://leetcode.com/problems/search-for-a-range/description/) 查找区间
+
+前0后1问题，注意初始时设置`head = 0, tail = nums.size()（可能有全0的情况发生）`
+
+先查找第一个大于等于target的数的位置作为first，再查找第一个大于target的数的位置减1作为last
+
+注意边界条件的判断！
