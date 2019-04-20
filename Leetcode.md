@@ -57,3 +57,16 @@ Leetcode[452. Minimum Number of Arrows to Burst Balloons (Medium)](https://leetc
 先查找第一个大于等于target的数的位置作为first，再查找第一个大于target的数的位置减1作为last
 
 注意边界条件的判断！
+
+#### 分治
+
+**Leetcode**[95. Unique Binary Search Trees II (Medium)](https://leetcode.com/problems/unique-binary-search-trees-ii/description/) :boom:
+
+递归构造左右子树
+
+#### 动态规划
+
+强盗抢劫[198. House Robber (Easy)](https://leetcode.com/problems/house-robber/description/)
+
+> 定义dp[i]为抢到第i个住户时的最大抢劫量，分两种情况，抢劫第i个住户，不抢劫第i个住户
+
