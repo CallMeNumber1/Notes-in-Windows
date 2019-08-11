@@ -40,7 +40,7 @@ y_pred = sigmoid(X * theta);
 J = -1.0 / m * sum(y .* log(y_pred) + (1 - y) .* log(1 - y_pred));
 J = J + lambda / (2.0 * m) * sum(theta(2:end) .^ 2);              % 忽略theta(1) （对应于theta_0，因为matlab下标从1开始）
 grad = 1.0 / m * (X' * (y_pred - y)); 
-grad(2:end) = grad(2:end) + (lambda / m) * theta(2:end);
+grad(2:end) = grad(2:end) + (lambda / m) * theta(2:end);     % 此处为何不是“-”减号呢？
 
 
 
