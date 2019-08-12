@@ -64,10 +64,7 @@ Theta2_grad = zeros(size(Theta2));
 
 % 1.Feedforward and cost function
 a1 = [ones(m, 1) X];
-z2 = a1 * Theta1';
-a2 = sigomid(z2);
-z3 = a2 * Theta2';
-
+z2 = a1 * T
 
 
 
