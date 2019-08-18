@@ -62,10 +62,11 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
-% 1.Feedforward and cost function
+% 将1-10的数字映射为logical array
 h = eye(num_labels);    % 10阶单位阵
 y = h(y, :);                    % 很巧妙地把1~10的值映射为对应的0/1向量 y.size=5000*1 -> y.size = 5000 * num_labels (num_labels=10)
 
+% Feedforward and cost function
 a1 = [ones(m, 1) X];        % 5000 * 401
 z2 = a1 * Theta1';           % 5000 * 25  
 a2 = sigmoid(z2);
@@ -74,20 +75,28 @@ a2 = [ones(n, 1) a2];       % 5000 * 26 每行为一个样例
 z3 = a2 * Theta2';          % 5000 * 10
 a3 = sigmoid(z3);           % 5000 * 10
 h = a3;
-J = 1 / m * sum(sum(-y .* log(h)) - (1-y) .* log(1-h));
+J =  sum(sum(-y .* log(h) - (1-y) .* log(1-h))) / m;
 
+% regularzation
+Theta1_reg = Theta1(:, 2:end);
+Theta2_reg = Theta2(:, 2:end);
+J = J + (lambda / (2 * m)) *  (sum(sum(Theta1_reg .^ 2)) + sum(sum(Theta2_reg .^ 2)));
 
-
-
-
-
-
-
-
-
-
-
-
+% backpropagation（用来计算梯度）
+delta3 = a3 - y;                        % 5000 * 10
+delta2 = (delta3 * Theta2);        % 5000 * 26
+delta2 = delta2(:, 2:end);          % 5000 * 25
+delta2 = delta2 .* sigmoidGradient(z2)
+Delta2 = zeros(size(Theta2));     % 10 * 26
+Delta1 = zeros(size(Theta1));      % 26 * 401
+Delta2 =Delta2 + delta3' * a2;
+Delta1 = Delta1 + delta2' * a1;
+% ---compute
+Theta1_grad = Delta1 / m;           
+Theta2_grad = Delta2 / m;
+% ---regularize
+Theta1_grad(:, 2:end) = Theta1_grad(:, 2:end) + (lambda / m) * Theta1(:, 2:end);
+Theta2_grad(:, 2:end) = Theta2_grad(:, 2:end) + (lambda /  m) * Theta2(:, 2:end);
 
 
 
