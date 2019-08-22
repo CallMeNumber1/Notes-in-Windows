@@ -53,11 +53,13 @@ error_val   = zeros(m, 1);
 
 % ---------------------- Sample Solution ----------------------
 for i = 1:m
-    theta = trainLinearReg(X(1:i, :), y(1:i), lambda)
+    theta = trainLinearReg(X(1:i, :), y(1:i, :), lambda);
     % 下面误差的计算也可以直接使用linearRegCostFunction，只需注意传入的lambda置为0即可
-    error_train(i) = (1 / (2 * m)) * sum((X(1:i, :) * theta - y(1:i)) .^ 2);
-    error_val(i) = (1 / (2 * m)) * sum((X * theta - y) .^ 2);
-end
+    error_train(i) = linearRegCostFunction(X(1:i, :), y(1:i, :), theta, 0);
+    error_val(i) = linearRegCostFunction(Xval, yval, theta, 0);
+    % error_train(i) = (1 / (2 * m)) * sum((X(1:i, :) * theta - y(1:i)) .^ 2);
+    % error_val(i) = (1 / (2 * m)) * sum((Xval * theta - yval) .^ 2);
+end;
 
 
 

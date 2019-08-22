@@ -39,9 +39,14 @@ error_val = zeros(length(lambda_vec), 1);
 %
 %
 
-
-
-
+% my answer
+for i = 1:length(lambda_vec)
+        lambda = lambda_vec(i);
+        theta = trainLinearReg(X, y, lambda);
+        % 计算误差的时候可以使用之前的代价函数，但要注意去掉正则化（即传入的lambda为0）
+        error_train(i) = linearRegCostFunction(X, y, theta, 0);
+        error_val(i) = linearRegCostFunction(Xval, yval, theta, 0);
+end;
 
 
 
